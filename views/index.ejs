@@ -20,16 +20,38 @@
   </body>
   <script>
     function getLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
+      if ("geolocation" in navigator) {
+        var options = {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        };
+
+        function success(pos) {
+          var crd = pos.coords;
+          const lat = crd.latitude;
+          const lon = crd.longitude;
+          const data = { lat, lon };
+          const options = {
+            method: "POST", // or 'PUT'
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+            
+          };
+          fetch("/",options); 
+
+        }
+
+        function error(err) {
+          console.warn(`ERROR(${err.code}): ${err.message}`);
+        }
+
+        navigator.geolocation.getCurrentPosition(success, error, options);
       } else {
-        document.getElementById("error").innerHTML =
-          "Geolocation is not supported by this browser.";
+        console.log("geolocation not available");
       }
-    }
-    function showPosition(position) {
-        lat=position.coords.latitude;
-        long=position.coords.longitude;
     }
   </script>
 </html>

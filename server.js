@@ -2,12 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const app = express()
+const geolocation = require('geolocation');
 
 const port = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine','ejs');
-
+app.use(express.json());
 app.get('/',function(req,res){
     res.render('index',{weather:null,error:null});
 });
@@ -15,17 +16,22 @@ app.get('/',function(req,res){
 app.post('/',function(req,res){
     city = req.body.city;
     lat = req.body.lat;
-    long = req.body.long;
-    console.log(`latitude:${lat} longitude:${long}`);
+    lon = req.body.lon;
     apiKey = '3d3d536cd82fbc755ed3debf513b4bac';
-    url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
     
+    if(city==null){
+        url = `http://api.openweathermap.org/data/2.5/weather?&appid=${apiKey}&units=metric&lat=${lat}&lon=${lon}`
+    }
+    else{
+        url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lat=${lat}&lon=${lon}`
+    }
     request(url,function(err,response,body){
         if(err){
             console.log(err);
         }
         else{
             let weather = JSON.parse(body);
+            console.log(weather);
             if(weather.main == undefined){
                 res.render('index',{weather:null,error:'Not a valid city name'});
             }
@@ -39,5 +45,5 @@ app.post('/',function(req,res){
 });
 
 app.listen(port,function(){
-    console.log(`listening on port : ${port}`);
+    console.log(`listening on port : ${port}`); 
 })
