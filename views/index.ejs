@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Test</title>
+  </head>
+  <body onload="getLocation()">
+    <p id="error"></p>
+    <h1>
+      <form action="/" method="post">
+        <input name="city" type="text" placeholder="Enter a City" required />
+        <input type="submit" value="Get Weather" />
+      </form>
+      <% if(weather !== null){ %>
+      <p><%= weather %></p>
+      <% } %> <% if(error !== null){ %>
+      <p><%= error %></p>
+      <% } %>
+    </h1>
+  </body>
+  <script>
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        document.getElementById("error").innerHTML =
+          "Geolocation is not supported by this browser.";
+      }
+    }
+    function showPosition(position) {
+        lat=position.coords.latitude;
+        long=position.coords.longitude;
+    }
+  </script>
+</html>
